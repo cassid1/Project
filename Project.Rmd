@@ -18,8 +18,19 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars}
+<<<<<<< HEAD
 summary(cars)
 ##Cars%>%
+=======
+listings <- read_csv("~/listings (3).csv")
+View(listings)
+
+neighborhood <- read_csv("~/neighbourhoods (3).csv")
+View(neighborhood)
+
+joinedlistings <- left_join(listings, neighborhood, by = "neighbourhood")
+View(joinedlistings)
+>>>>>>> 20bd6cbf521e5a859858f1c873b5f76d9a20d830
 ```
 
 ## Including Plots
