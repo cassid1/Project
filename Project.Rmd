@@ -18,19 +18,100 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars}
-<<<<<<< HEAD
-summary(cars)
-##Cars%>%
-=======
-listings <- read_csv("~/listings (3).csv")
+listings <- read_csv("listings (3).csv")
 View(listings)
 
-neighborhood <- read_csv("~/neighbourhoods (3).csv")
+neighborhood <- read_csv("neighbourhoods (3).csv")
 View(neighborhood)
 
 joinedlistings <- left_join(listings, neighborhood, by = "neighbourhood")
 View(joinedlistings)
->>>>>>> 20bd6cbf521e5a859858f1c873b5f76d9a20d830
+
+joinedlistings%>%
+  filter(!is.na(`median home price`) & !is.na(availability_365))%>%
+  group_by(neighbourhood)%>%
+    filter(n()>20)%>%
+  summarize(median_home_price = mean(`median home price`),
+            mean_nights_rented = mean(availability_365))%>%
+  ggplot(mapping=aes(x= median_home_price, y = mean_nights_rented, color = neighbourhood))+
+  geom_point()
+
+
+joinedlistings%>%
+  filter(!is.na(`median home price`) & !is.na(price))%>%
+  group_by(neighbourhood)%>%
+  filter(n()>20)%>%
+  summarize(median_home_price = mean(`median home price`),
+            mean_price = mean(price))%>%
+  ggplot(mapping=aes(x= median_home_price, y = mean_price, color = neighbourhood))+
+  geom_point()
+
+  joinedlistings%>%
+      filter(!is.na(price) & !is.na(availability_365))%>%
+    ggplot(mapping=aes(x= price, y = availability_365))+
+    geom_point()+
+    facet_wrap(~neighbourhood)
+  
+  View(joinedlistings%>%
+    filter(str_detect(joinedlistings$name, "Cup")))
+  
+joinedlistings %>%
+  mutate(has_phrase=str_detect(tolower(joinedlistings$name), "sunny"))%>%
+  filter(!is.na(has_phrase))%>%
+ group_by(has_phrase, neighbourhood) %>%
+ summarise(mean_price_per_neighborhood = mean(price))%>%
+  ggplot(mapping = aes(x = neighbourhood, y = mean_price_per_neighborhood, color = has_phrase))+
+  geom_point()
+
+joinedlistings %>%
+  mutate(has_phrase=str_detect(tolower(joinedlistings$name), "cup"))%>%
+  filter(!is.na(has_phrase))%>%
+  ggplot(mapping = aes(x = neighbourhood, y = price, color = has_phrase))+
+  geom_boxplot()
+
+joinedlistings %>%
+  mutate(has_phrase=str_detect(tolower(joinedlistings$name), "house"))%>%
+  filter(!is.na(has_phrase))%>%
+  ggplot(mapping = aes(x = has_phrase, y = price))+
+  geom_violin()
+
+%>%
+ summarise(mean_price = mean(minimum_nights))
+
+
+joinedlistings %>%
+  mutate(has_phrase=str_detect(tolower(joinedlistings$name), "sunny"))%>%
+  filter(!is.na(has_phrase))%>%
+  ggplot(mapping = aes(x = neighbourhood, fill = has_phrase))+
+  geom_bar(aes(y = (..count..)/sum(..count..)))
+  geom_bar(stat = "count", position = "dodge")
+
+  
+joinedlistings%>%
+    group_by(neighbourhood)%>%
+    mutate(has_phrase=str_detect(tolower(joinedlistings$name), "sunny"))%>%
+    ggplot(mapping = aes(x = neighbourhood, y = price, color = has_phrase))+
+    geom_point()
+  
+  joinedlistings%>%
+    filter(price>500)%>%
+    group_by(neighbourhood)%>%
+    filter(n()>5)%>%
+    ##summarize(mean_price = mean(price))%>%
+    ungroup%>%
+    ggplot(mapping = aes(x=neighbourhood), color = fct_reorder(neighbourhood, `median home price`))+
+    geom_bar(aes(fill = "identity"))+
+    labs(color = "")
+  
+  
+  
+    joinedlistings%>%
+    filter(price>500)%>%
+      ggplot(mapping = aes(x=neighbourhood, fill = neighbourhood))+
+    geom_bar()+
+      labs(x = " ")+
+      scale_x_discrete(labels = c("","","","","","","","","","","","","","",""))
+      
 ```
 
 ## Including Plots
