@@ -1,7 +1,7 @@
 ---
 title: "Project"
-output: html_document
 runtime: shiny
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -29,30 +29,46 @@ neighborhood <- read_csv("neighbourhoods (3).csv")
 #View(neighborhood)
 
 joinedlistings1 <- left_join(listings, neighborhood, by = "neighbourhood")
-joinedlistings <-left_join(joinedlistings1, listings2, by ="id") 
+joinedlistings <-left_join(joinedlistings1, listings2, by ="id")
 #View(joinedlistings)
 
 inputPanel(
-  selectInput("n_breaks", label = "Number of bins:",
+    selectInput("n_breaks", label = "Number of bins:",
               choices = c(10, 20, 35, 50), selected = 20),
-  
+  selectInput("phrases", label = "Choose a phrase:",
+              choices = c("cup", "balls", "house"), selected = "cup"),
   sliderInput("bw_adjust", label = "Bandwidth adjustment:",
-              min = 0.2, max = 2, value = 1, step = 0.2)
+              min = 0.2, max = 2, value = 1, step = 0.2),
+  textInput("phrase","Enter a phrase you want to test","cup")
 )
 
 renderPlot({
-  hist(joinedlistings$price, probability = TRUE, 
-       breaks = as.numeric(input$n_breaks),
-       xlab = "Duration (minutes)", 
-       main = "Geyser eruption duration")
   
-  dens <- density(faithful$vfgbhudn, adjust = input$bw_adjust)
-  lines(dens, col = "blue")
+  joinedlistings %>%
+  mutate(has_phrase=str_detect(tolower(joinedlistings$name), input$phrase))%>%
+  filter(!is.na(has_phrase))%>%
+  ggplot(mapping = aes(x = has_phrase, y = price))+
+  geom_violin()
+  
+  # ggplot(joinedlistings, aes(x = neighborhood)) +
+  #   geom_violin
+  #   geom_histogram(aes(y = ..density..), 
+  #                  bins = as.numeric(input$n_breaks),
+  #                  fill = "white", colour = "black") +
+  #   geom_density(adjust = input$bw_adjust, colour = "blue") +
+  #   labs(list(x = "Duration (minutes)", 
+  #             title = "Geyser eruption duration"))
 })
+
+# joinedlistings %>%
+#   mutate(has_phrase=str_detect(tolower(joinedlistings$name), "cup"))%>%
+#   filter(!is.na(has_phrase))%>%
+#   ggplot(mapping = aes(x = has_phrase, y = price))+
+#   geom_violin()
 ```
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars, eval = FALSE}
+```{r cars, eval=FALSE, include=FALSE}
 
 joinedlistings%>%
   filter(!is.na(`median home price`) & !is.na(availability_365))%>%
@@ -165,7 +181,7 @@ joinedlistings%>%
 
 You can also embed plots, for example:
 Airbnb map
-```{r }
+```{r eval=FALSE, include=FALSE}
 register_google(key = "AIzaSyCx-A7DH5JDWRLgo3vfMuf5_uUzwp6oqZI", write = TRUE)
 TC_map <- get_map(location = "twin cities, minnesota", zoom = 9)
 ggmap(TC_map)+ 
