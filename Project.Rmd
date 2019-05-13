@@ -7,16 +7,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-```
 
-
-
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-```{r joinedlistings, echo=FALSE}
 listings <- read_csv("listings (3).csv")
 #View(listings)
 
@@ -30,7 +21,18 @@ neighborhood <- read_csv("neighbourhoods (3).csv")
 
 joinedlistings1 <- left_join(listings, neighborhood, by = "neighbourhood")
 joinedlistings <-left_join(joinedlistings1, listings2, by ="id")
+joinedlistings$extra_people<-as.numeric(joinedlistings$extra_people)
 #View(joinedlistings)
+```
+
+
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+```{r checkphrases, echo=FALSE}
 
 inputPanel(
     selectInput("n_breaks", label = "Number of bins:",
@@ -66,6 +68,40 @@ renderPlot({
 #   ggplot(mapping = aes(x = has_phrase, y = price))+
 #   geom_violin()
 ```
+
+
+```{r boxplot, echo=FALSE}
+
+inputPanel(
+    selectInput("x_variable", label = "Select how listings should be grouped:",
+              choices = colnames(joinedlistings)[c(6,9,18,20,21,22,23)], selected = colnames(joinedlistings)[6])
+)
+
+renderPlot({
+joinedlistings%>%
+  filter(!is.na(price) & !is.na(get(input$x_variable)))%>%
+  ggplot(mapping= aes(x= as_factor(get(input$x_variable)), y = price))+
+  geom_boxplot()
+  
+})
+```
+
+```{r scatterplot, echo=FALSE}
+
+inputPanel(
+    selectInput("x_variable2", label = "Select how listings should be grouped:",
+              choices = colnames(joinedlistings)[c(16,17,25)], selected = colnames(joinedlistings)[17])
+)
+
+renderPlot({
+joinedlistings%>%
+  filter(!is.na(price) & !is.na(get(input$x_variable2)))%>%
+  ggplot(mapping= aes(x= get(input$x_variable2), y = price))+
+  geom_point()
+  
+})
+```
+
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars, eval=FALSE, include=FALSE}
@@ -117,8 +153,8 @@ joinedlistings%>%
     geom_point()+
     facet_wrap(~neighbourhood)
   
-  View(joinedlistings%>%
-    filter(str_detect(joinedlistings$name, "Cup")))
+  #View(joinedlistings%>%
+   # filter(str_detect(joinedlistings$name, "Cup")))
   
 joinedlistings %>%
   mutate(has_phrase=str_detect(tolower(joinedlistings$name), "sunny"))%>%
