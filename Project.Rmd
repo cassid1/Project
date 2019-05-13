@@ -164,9 +164,12 @@ joinedlistings%>%
 ## Including Plots
 
 You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+Airbnb map
+```{r }
+register_google(key = "AIzaSyCx-A7DH5JDWRLgo3vfMuf5_uUzwp6oqZI", write = TRUE)
+TC_map <- get_map(location = "twin cities, minnesota", zoom = 9)
+ggmap(TC_map)+ 
+  geom_point(data = joinedlistings, mapping = aes(longitude, latitude, alpha = 0.1, col = "red"))
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

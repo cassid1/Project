@@ -1,0 +1,45 @@
+---
+title: "LA map code"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("maps")
+#install.packages("mapdata")
+#install.packages("ggmap")
+#install.packages("mapproj")
+#install.packages("ggplot2")
+#only need to run install functions ONCE - then they are permanetly installed 
+
+
+
+library(maps)
+library(mapdata)
+library(ggmap) #use to read map
+library(mapproj) #map tools kits
+library(ggplot2) #read the map data
+
+
+
+```
+
+```{r}
+register_google(key = "AIzaSyARb0Fsx8OYgRVToJK_2Abl4r1lO_1ACCY", write = TRUE)
+#this is my API key, please don't use this specific one 
+
+LA_map <- get_map(location = "los angeles, california", zoom = 12)
+
+ggmap(LA_map)
+
+
+
+
+```
+
+
+
+
+
+
